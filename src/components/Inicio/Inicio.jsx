@@ -1,13 +1,50 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaBarcode, FaBoxOpen, FaWarehouse, FaArrowUp, FaArrowDown, FaClipboardList, FaCogs, FaUpload ,FaSearch} from 'react-icons/fa';
+import { Link , useNavigate} from 'react-router-dom';
+import { FaBarcode, FaBoxOpen, FaWarehouse, FaArrowDown, FaClipboardList, FaCogs, FaUser  ,FaSearch, FaSignOutAlt} from 'react-icons/fa';
+import axios from 'axios';
+
 
 const Inicio = () => {
   const [precioStock, setPrecioStock] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
+  // const handleLogout = async () => {
+  //   try {
+  //     await axios.post('http://localhost:5324/usuarios/logout', {}, { withCredentials: true });
+  
+  //     // Elimina el token de la cookie manualmente
+  //     document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  
+  //     localStorage.removeItem('empresaId');  // Limpia cualquier dato que esté guardado en localStorage
+  
+  //     // Redirige al login después de cerrar sesión
+  //     navigate('/');
+  //   } catch (error) {
+  //     console.error('Error al cerrar sesión:', error);
+  //   }
+  // };
+  
+  const handleLogout = async () => {
+    try {
+      await axios.post('https://asijeminapis.website:5324/usuarios/logout', {}, { withCredentials: true });
+      
+      // Elimina el token de la cookie manualmente
+      document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      
+      localStorage.removeItem('empresaId');  // Limpia cualquier dato que esté guardado en localStorage
+  
+      // Redirige al login y fuerza una recarga de la página para limpiar el estado
+      navigate('/');
+      window.location.reload();  // Forzar la recarga completa de la página
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+  
   useEffect(() => {
     // Función para obtener el precio del stock
     const fetchPrecioStock = async () => {
@@ -59,13 +96,29 @@ const Inicio = () => {
        
 
       <Link to="/consulta" className="flex flex-col items-center">
-      <FaSearch className="text-black text-2xl mb-1" />
+      <FaSearch className="text-orange-700 text-2xl mb-1" />
       <span className="text-xs">Consultar Producto</span>
       </Link>
+
+      <Link to="/perfil" className="flex flex-col items-center text-center">
+          <FaUser  className="text-emerald-400 text-5xl mb-2" />
+          <span className="text-sm">Mi Perfil</span>
+        </Link>
+
+        
+      <button onClick={handleLogout} className="flex flex-col items-center text-center">
+        <FaSignOutAlt className="text-red-500 text-5xl mb-2" />
+        <span className="text-sm">Cerrar Sesión</span>
+      </button>
+
+
         <Link to="/stock" className="flex flex-col items-center text-center">
           <FaCogs className="text-gray-500 text-5xl mb-2" />
           <span className="text-sm">Configuración</span>
         </Link>
+
+
+       
       </div>
     </div>
   );

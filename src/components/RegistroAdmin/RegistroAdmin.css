@@ -1,0 +1,81 @@
+.registro-admin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .registro-admin-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 700px; /* Limitar ancho máximo */
+    width: 100%;
+  }
+  
+  .registro-admin-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 20px; /* Espacio entre columnas */
+  }
+  
+  .registro-admin-input-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .registro-admin-input-group.full-width {
+    grid-column: span 2; /* Ocupa ambas columnas */
+  }
+  
+  .registro-admin-input-group label {
+    font-weight: bold;
+  }
+  
+  .registro-admin-input-group input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .registro-admin-button-group {
+    grid-column: span 2; /* Ocupa ambas columnas */
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .registro-admin-button {
+    background-color: #4CAF50;
+    color: white;
+    width: 100%; /* Ocupa todo el ancho del botón */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .registro-admin-button-cancel {
+    background-color: #f44336; /* Rojo */
+    color: white;
+    width: 100%; /* Ocupa todo el ancho del botón */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .registro-admin-button:hover,
+  .registro-admin-button-cancel:hover {
+    opacity: 0.9;
+  }
+  
+  .registro-admin-error-message {
+    color: red;
+    font-weight: bold;
+    grid-column: span 2; /* Ocupa ambas columnas */
+    text-align: center;
+  }
+  

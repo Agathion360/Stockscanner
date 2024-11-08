@@ -197,12 +197,36 @@ const BarcodeScanner = () => {
     }
   };
 
+  // const openModal = () => {
+  //   setIsModalOpen(true);
+  //   codeReader.current = new BrowserMultiFormatReader();
+  //   navigator.mediaDevices.getUserMedia({
+  //     video: { facingMode: { exact: "environment" } } // Forzar la cámara trasera
+  //   })
+  //     .then((stream) => {
+  //       videoRef.current.srcObject = stream;
+  //       streamRef.current = stream;
+  //       startSingleScan(); // Inicia el escaneo único cuando se abre el modal
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error al acceder a la cámara:", err);
+  //     });
+  // };
+
   const openModal = () => {
     setIsModalOpen(true);
     codeReader.current = new BrowserMultiFormatReader();
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { exact: "environment" } } // Forzar la cámara trasera
-    })
+    
+    // Configurar las restricciones de la cámara
+    const constraints = {
+      video: {
+        facingMode: { exact: "environment" }, // Forzar cámara trasera
+        focusMode: "manual",  // Intentar establecer el enfoque manual
+        advanced: [{ focusMode: "manual" }] // Configuración avanzada para deshabilitar el autofoco
+      }
+    };
+    
+    navigator.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
@@ -212,6 +236,7 @@ const BarcodeScanner = () => {
         console.error("Error al acceder a la cámara:", err);
       });
   };
+
 
   const closeModal = () => {
     stopScan();

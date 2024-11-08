@@ -1,3 +1,4 @@
+
 // import React, { useState, useRef, useEffect } from 'react';
 // import { FaBarcode, FaTrash } from 'react-icons/fa';
 // import BottomNav from '../ButtonNav/ButtonNav.jsx';
@@ -5,7 +6,7 @@
 // import Swal from 'sweetalert2';
 // import alertify from 'alertifyjs';
 // import 'alertifyjs/build/css/alertify.css';
-// import 'alertifyjs/build/css/themes/default.css'; // Incluye el tema de alertifyjs
+// import 'alertifyjs/build/css/themes/default.css';
 
 // const Ingreso = () => {
 //   const [nombre, setNombre] = useState('');
@@ -23,7 +24,7 @@
 //   useEffect(() => {
 //     const fetchCategorias = async () => {
 //       try {
-//         const response = await fetch('https://asijeminapis.website:4687/categorias');
+//         const response = await fetch('http://localhost:4687/categorias');
 //         const data = await response.json();
 //         setCategorias(data);
 //       } catch (error) {
@@ -34,54 +35,68 @@
 //     fetchCategorias();
 //   }, []);
 
+
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 
+//     const empresaId = localStorage.getItem('empresaId');
+
+//     if (!empresaId) {
+//         alertify.error('No se pudo obtener la empresa. Por favor, verifica tu sesión.');
+//         return;
+//     }
+
 //     const nuevoProducto = {
-//       nombre,
-//       precio: parseFloat(precio),
-//       precioVenta: parseFloat(precioVenta),
-//       stock: parseInt(stock, 10),
-//       categoria,
-//       codigoBarra
+//         nombre,
+//         precio: parseFloat(precio),
+//         precioVenta: parseFloat(precioVenta),
+//         stock: parseInt(stock, 10),
+//         categoria, // Asegúrate de que este valor es correcto y es un ObjectId válido
+//         codigoBarra,
+//         empresa: empresaId
 //     };
 
-//     try {
-//       const response = await fetch('https://asijeminapis.website:4687/productos', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(nuevoProducto)
-//       });
+//     console.log('Datos del nuevo producto:', nuevoProducto);
 
-//       if (response.ok) {
-//         Swal.fire({
-//           title: "Ingreso de productos",
-//           text: "Producto ingresado exitosamente",
-//           icon: "success"
+//     try {
+//         const response = await fetch('http://localhost:4687/productos', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(nuevoProducto)
 //         });
-//         setNombre('');
-//         setPrecio('');
-//         setPrecioVenta('');
-//         setStock('');
-//         setCategoria('');
-//         setCodigoBarra('');
-//       } else {
-//         const errorData = await response.json();
-//         alertify.error(`Error al ingresar el producto: ${errorData.message}`);
-//       }
+
+//         if (response.ok) {
+//             Swal.fire({
+//                 title: "Ingreso de productos",
+//                 text: "Producto ingresado exitosamente",
+//                 icon: "success"
+//             });
+//             setNombre('');
+//             setPrecio('');
+//             setPrecioVenta('');
+//             setStock('');
+//             setCategoria('');
+//             setCodigoBarra('');
+//         } else {
+//             const errorData = await response.json();
+//             alertify.error(`Error al ingresar el producto: ${errorData.message}`);
+//         }
 //     } catch (error) {
-//       console.error('Error al ingresar el producto:', error);
-//       alertify.error('Hubo un error al ingresar el producto. Por favor, intenta nuevamente.');
+//         console.error('Error al ingresar el producto:', error);
+//         alertify.error('Hubo un error al ingresar el producto. Por favor, intenta nuevamente.');
 //     }
-//   };
+// };
+
+
 
 //   const startScan = async () => {
 //     try {
 //       const result = await codeReader.current.decodeOnceFromVideoDevice(undefined, videoRef.current);
 //       console.log("Código de barras escaneado:", result.text);
 //       setCodigoBarra(result.text);
+//       alertify.success('Código de barras escaneado correctamente');
 //       closeModal();
 //     } catch (err) {
 //       console.error("Error durante el escaneo:", err);
@@ -262,6 +277,13 @@
 
 
 
+
+
+
+
+
+
+
 import React, { useState, useRef, useEffect } from 'react';
 import { FaBarcode, FaTrash } from 'react-icons/fa';
 import BottomNav from '../ButtonNav/ButtonNav.jsx';
@@ -269,13 +291,15 @@ import { BrowserMultiFormatReader } from '@zxing/library';
 import Swal from 'sweetalert2';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
-import 'alertifyjs/build/css/themes/default.css'; // Incluye el tema de alertifyjs
+import 'alertifyjs/build/css/themes/default.css';
 
 const Ingreso = () => {
   const [nombre, setNombre] = useState('');
   const [precio, setPrecio] = useState('');
   const [precioVenta, setPrecioVenta] = useState('');
   const [stock, setStock] = useState('');
+  const [stockMinimo, setStockMinimo] = useState(''); // Nuevo estado para stock mínimo
+  const [fechaVencimiento, setFechaVencimiento] = useState(''); // Nuevo estado para fecha de vencimiento
   const [categoria, setCategoria] = useState('');
   const [codigoBarra, setCodigoBarra] = useState('');
   const [categorias, setCategorias] = useState([]);
@@ -284,6 +308,8 @@ const Ingreso = () => {
   const codeReader = useRef(null);
   const streamRef = useRef(null);
 
+
+  
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -301,43 +327,55 @@ const Ingreso = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const empresaId = localStorage.getItem('empresaId');
+
+    if (!empresaId) {
+        alertify.error('No se pudo obtener la empresa. Por favor, verifica tu sesión.');
+        return;
+    }
+
     const nuevoProducto = {
-      nombre,
-      precio: parseFloat(precio),
-      precioVenta: parseFloat(precioVenta),
-      stock: parseInt(stock, 10),
-      categoria,
-      codigoBarra
+        nombre,
+        precio: parseFloat(precio),
+        precioVenta: parseFloat(precioVenta),
+        stock: parseInt(stock, 10),
+        stock_minimo: parseInt(stockMinimo, 10), // Incluir stock mínimo
+        fecha_vencimiento: fechaVencimiento ? new Date(`${fechaVencimiento}T00:00:00.000Z`) : null, 
+        categoria,
+        codigoBarra,
+        empresa: empresaId
     };
 
     try {
-      const response = await fetch('https://asijeminapis.website:4687/productos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(nuevoProducto)
-      });
-
-      if (response.ok) {
-        Swal.fire({
-          title: "Ingreso de productos",
-          text: "Producto ingresado exitosamente",
-          icon: "success"
+        const response = await fetch('https://asijeminapis.website:4687/productos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(nuevoProducto)
         });
-        setNombre('');
-        setPrecio('');
-        setPrecioVenta('');
-        setStock('');
-        setCategoria('');
-        setCodigoBarra('');
-      } else {
-        const errorData = await response.json();
-        alertify.error(`Error al ingresar el producto: ${errorData.message}`);
-      }
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Ingreso de productos",
+                text: "Producto ingresado exitosamente",
+                icon: "success"
+            });
+            setNombre('');
+            setPrecio('');
+            setPrecioVenta('');
+            setStock('');
+            setStockMinimo(''); // Limpiar stock mínimo
+            setFechaVencimiento(''); // Limpiar fecha de vencimiento
+            setCategoria('');
+            setCodigoBarra('');
+        } else {
+            const errorData = await response.json();
+            alertify.error(`Error al ingresar el producto: ${errorData.message}`);
+        }
     } catch (error) {
-      console.error('Error al ingresar el producto:', error);
-      alertify.error('Hubo un error al ingresar el producto. Por favor, intenta nuevamente.');
+        console.error('Error al ingresar el producto:', error);
+        alertify.error('Hubo un error al ingresar el producto. Por favor, intenta nuevamente.');
     }
   };
 
@@ -400,6 +438,11 @@ const Ingreso = () => {
     };
   }, []);
 
+
+  console.log(categoria)
+  
+  console.log(categorias)
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-20">
       <h3 className="text-3xl font-bold mb-6 text-center">Alta Nuevos Productos</h3>
@@ -414,9 +457,9 @@ const Ingreso = () => {
             required
           />
         </div>
-        
-        {/* Sección de Precio, Precio de Venta y Stock */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        {/* Sección de Precio, Precio de Venta, Stock y Stock Mínimo */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="flex flex-col">
             <label className="mb-2 font-medium">Precio:</label>
             <input
@@ -447,6 +490,27 @@ const Ingreso = () => {
               required
             />
           </div>
+          <div className="flex flex-col">
+            <label className="mb-2 font-medium">Stock Mínimo:</label>
+            <input
+              type="number"
+              value={stockMinimo}
+              onChange={(e) => setStockMinimo(e.target.value)}
+              className="p-2 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Campo para la Fecha de Vencimiento */}
+        <div className="flex flex-col">
+          <label className="mb-2 font-medium">Fecha de Vencimiento:</label>
+          <input
+            type="date"
+            value={fechaVencimiento}
+            onChange={(e) => setFechaVencimiento(e.target.value)}
+            className="p-2 border border-gray-300 rounded-lg"
+          />
         </div>
 
         <div className="flex flex-col">
