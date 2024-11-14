@@ -332,7 +332,9 @@ const Stock = () => {
   const fetchProductos = async () => {
     try {
       const empresaId = localStorage.getItem('empresaId'); // Obtener el empresaId desde localStorage
-      const response = await fetch(`https://asijeminapis.website:4687/productos?empresaId=${empresaId}`, {
+      // const response = await fetch(`https://asijeminapis.website:4687/productos?empresaId=${empresaId}`, {
+        const response = await fetch(`http://localhost:4687/productos?empresaId=${empresaId}`, {
+
 
         credentials: 'include', // Incluir credenciales si es necesario
       }); // Pasar el empresaId en la URL

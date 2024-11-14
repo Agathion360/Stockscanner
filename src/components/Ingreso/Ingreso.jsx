@@ -313,7 +313,9 @@ const Ingreso = () => {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const response = await fetch('https://asijeminapis.website:4687/categorias');
+        // const response = await fetch('https://asijeminapis.website:4687/categorias');
+        const response = await fetch('https://localhost:4687/categorias');
+
         const data = await response.json();
         setCategorias(data);
       } catch (error) {
@@ -347,7 +349,9 @@ const Ingreso = () => {
     };
 
     try {
-        const response = await fetch('https://asijeminapis.website:4687/productos', {
+        // const response = await fetch('https://asijeminapis.website:4687/productos', {
+          const response = await fetch('https://localhost:4687/productos', {
+
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
