@@ -314,7 +314,7 @@ const Ingreso = () => {
     const fetchCategorias = async () => {
       try {
         // const response = await fetch('https://asijeminapis.website:4687/categorias');
-        const response = await fetch('https://localhost:4687/categorias');
+        const response = await fetch('http://localhost:4687/categorias');
 
         const data = await response.json();
         setCategorias(data);
@@ -350,7 +350,7 @@ const Ingreso = () => {
 
     try {
         // const response = await fetch('https://asijeminapis.website:4687/productos', {
-          const response = await fetch('https://localhost:4687/productos', {
+          const response = await fetch('http://localhost:4687/productos', {
 
             method: 'POST',
             headers: {
@@ -443,9 +443,6 @@ const Ingreso = () => {
   }, []);
 
 
-  console.log(categoria)
-  
-  console.log(categorias)
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-20">

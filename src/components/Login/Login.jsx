@@ -892,7 +892,6 @@
 // }
 
 // export default Login;
-
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -901,27 +900,16 @@ import './Login.css';
 function Login() {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [contraseña, setContraseña] = useState('');
-  const [error, setError] = useState('');
+  const { login, errorMessage } = useContext(AuthContext); // Accede a errorMessage directamente desde el contexto
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login({ nombreUsuario, contraseña });
       navigate('/inicio');
-    } catch (error) {
-      console.error('Error en el login:', error);
-      if (error.response) {
-        // Verificamos si el error es por cuenta inactiva y mostramos un mensaje específico
-        if (error.response.data.message === 'Usuario inactivo, no puede iniciar sesión') {
-          setError('Tu cuenta está deshabilitada. Contacta al administrador.');
-        } else {
-          setError('Usuario o contraseña incorrectos');
-        }
-      } else {
-        setError('Error de red. Inténtalo de nuevo más tarde.');
-      }
+    } catch {
+      // No es necesario manejar el error aquí, ya que errorMessage se actualiza en el contexto
     }
   };
 
@@ -948,7 +936,8 @@ function Login() {
               required
             />
           </div>
-          {error && <p className="error-message">{error}</p>}
+          {/* Muestra el mensaje de error desde errorMessage del contexto */}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <button type="submit" className="login-button">Ingresar</button>
         </form>
       </div>
